@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+﻿import { useReducedMotion } from '@/hooks/useReducedMotion';
+import React, { Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, FileText, Layers, Video, Gamepad2, ClipboardCheck } from 'lucide-react';
 import { MODULES } from '../data/modules';
@@ -6,7 +7,7 @@ import ArticleStep from './lesson/ArticleStep';
 import FlashcardsStep from './lesson/FlashcardsStep';
 import QuizStep from './lesson/QuizStep';
 import RoyaleDemoFrame from './RoyaleDemoFrame';
-import NeuronBackdrop from './NeuronBackdrop';
+const NeuronBackdrop = React.lazy(() => import('./NeuronBackdrop'));
 
 const noop = () => {};
 const demoModule = MODULES[0];
@@ -57,12 +58,17 @@ const SLIDES = [
 const ROTATE_MS = 7000;
 
 export default function HowItWorksShowcase() {
+  const reducedMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
 
+  // Auto-advance pauses under reduced motion: a carousel that rotates on its
+  // own is exactly the kind of animation the setting exists to stop. Manual
+  // prev/next/dot controls below always remain available.
   useEffect(() => {
+    if (reducedMotion) return;
     const id = window.setTimeout(() => setIndex((i) => (i + 1) % SLIDES.length), ROTATE_MS);
     return () => window.clearTimeout(id);
-  }, [index]);
+  }, [index, reducedMotion]);
 
   const slide = SLIDES[index];
   const isVideo = slide.key === 'video';
@@ -72,7 +78,7 @@ export default function HowItWorksShowcase() {
   return (
     <div>
       <div className="device-window relative w-full h-[560px] sm:h-[600px] md:h-[640px] rounded-3xl overflow-hidden flex items-center justify-center p-6 sm:p-10">
-        <NeuronBackdrop />
+        {!reducedMotion && <Suspense fallback={null}><NeuronBackdrop /></Suspense>}
 
         <motion.div
           key={slide.key}
@@ -85,7 +91,21 @@ export default function HowItWorksShowcase() {
         >
           {slide.key === 'article' && <ArticleStep sections={[demoModule.steps.article.sections[0]]} complete={false} onComplete={noop} />}
           {slide.key === 'flashcards' && <FlashcardsStep cards={demoModule.steps.flashcards.cards} complete={false} onComplete={noop} />}
-          {isVideo && <video src="/showcase.mp4" className="w-full h-full object-cover" autoPlay loop muted playsInline controls />}
+          {isVideo && (
+            <video
+              src="/showcase.mp4"
+              className="w-full h-full object-cover"
+              // Decorative demo loop, not content: never autoplay for motion-
+              // sensitive visitors; everyone else gets manual controls.
+              autoPlay={!reducedMotion}
+              loop
+              muted
+              playsInline
+              controls
+              preload="none"
+              aria-label="Preview of a Neuron learning module video"
+            />
+          )}
           {slide.key === 'game' && <RoyaleDemoFrame />}
           {slide.key === 'quiz' && (
             <QuizStep
@@ -141,3 +161,5 @@ export default function HowItWorksShowcase() {
     </div>
   );
 }
+
+

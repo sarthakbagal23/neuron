@@ -1,10 +1,13 @@
+﻿import React, { Suspense } from 'react';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 import HeroContent from '../components/HeroContent';
-import BrainScene from '../components/BrainScene';
+const BrainScene = React.lazy(() => import('../components/BrainScene'));
 import ParticleText from '../components/ParticleText';
 import LetterGlitch from '../components/LetterGlitch';
 import PixelSnow from '../components/PixelSnow';
 
 export default function Home() {
+  const reducedMotion = useReducedMotion();
   return (
     <>
       <div className="relative z-0">
@@ -24,7 +27,7 @@ export default function Home() {
             <PixelSnow color="#7dd3fc" direction={110} />
           </div>
 
-          <BrainScene />
+          {!reducedMotion && <Suspense fallback={null}><BrainScene /></Suspense>}
 
           {/* "AI" forms out of particles inside/over the brain on hover,
               layered above the (now transparent) brain canvas so the code
@@ -69,3 +72,4 @@ export default function Home() {
     </>
   );
 }
+
