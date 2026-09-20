@@ -16,7 +16,12 @@ import { useEffect, useState } from 'react';
 // The timeout backstop (default 12s) covers sighted users who load and just
 // read without touching anything: the atmosphere still arrives. It sits past
 // the end of a typical measurement trace, so it doesn't re-enter the window.
-const GATE_EVENTS = ['pointermove', 'pointerdown', 'scroll', 'keydown', 'touchstart', 'wheel'] as const;
+// `scroll` is deliberately NOT a gate event: App.tsx calls window.scrollTo
+// on every route change, and that programmatic scroll would open the gate
+// instantly on load (this exact bug shipped once — three.js showed up in the
+// trace). Real scrolling always arrives alongside one of the events below:
+// wheel for mice, touchstart for touch, keydown for keyboard scrolling.
+const GATE_EVENTS = ['pointermove', 'pointerdown', 'keydown', 'touchstart', 'wheel'] as const;
 
 export function useVisualsGate(timeoutMs = 12000): boolean {
   const [ready, setReady] = useState(false);
