@@ -1,5 +1,6 @@
 ﻿import React, { Suspense } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useAfterLoadIdle } from '@/hooks/useAfterLoadIdle';
 import HeroContent from '../components/HeroContent';
 const BrainScene = React.lazy(() => import('../components/BrainScene'));
 import ParticleText from '../components/ParticleText';
@@ -8,6 +9,11 @@ import PixelSnow from '../components/PixelSnow';
 
 export default function Home() {
   const reducedMotion = useReducedMotion();
+  // Heavy atmosphere (WebGL + three canvas loops) mounts only after load +
+  // idle: the headline and progress card paint immediately, the spectacle
+  // layers in behind them. See useAfterLoadIdle for the measured why.
+  const visualsReady = useAfterLoadIdle();
+  const showVisuals = !reducedMotion && visualsReady;
   return (
     <>
       <div className="relative z-0">
@@ -17,22 +23,23 @@ export default function Home() {
               layer. Low opacity wrapper (cheap alpha blend, not extra
               compute) keeps it from competing with the actual content. */}
           <div className="absolute inset-0 opacity-[0.14]">
-            <LetterGlitch glitchColors={['#0c1f3d', '#1e3a5f', '#38bdf8']} glitchSpeed={70} centerVignette outerVignette smooth />
+            {showVisuals && <LetterGlitch glitchColors={['#0c1f3d', '#1e3a5f', '#38bdf8']} glitchSpeed={70} centerVignette outerVignette smooth />}
           </div>
 
           {/* Gentle blue pixel-snow drifting across the hero. See
               PixelSnow.tsx for why its defaults are already turned down;
               this opacity wrapper turns it down further still. */}
           <div className="absolute inset-0 opacity-60 pointer-events-none">
-            <PixelSnow color="#7dd3fc" direction={110} />
+            {showVisuals && <PixelSnow color="#7dd3fc" direction={110} />}
           </div>
 
-          {!reducedMotion && <Suspense fallback={null}><BrainScene /></Suspense>}
+          {showVisuals && <Suspense fallback={null}><BrainScene /></Suspense>}
 
           {/* "AI" forms out of particles inside/over the brain on hover,
               layered above the (now transparent) brain canvas so the code
               backdrop still shows through around it. */}
           <div className="absolute inset-0 flex items-center justify-center">
+            {showVisuals && (
             <ParticleText
               text="AI"
               trigger="hover"
@@ -51,6 +58,7 @@ export default function Home() {
               glow
               className="w-full h-full max-w-xl max-h-64"
             />
+            )}
           </div>
 
           {/* Fades to fully solid black well before the hero's own hard

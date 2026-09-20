@@ -1,4 +1,5 @@
 ﻿import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useAfterLoadIdle } from '@/hooks/useAfterLoadIdle';
 import React, { Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, FileText, Layers, Video, Gamepad2, ClipboardCheck } from 'lucide-react';
@@ -59,6 +60,9 @@ const ROTATE_MS = 7000;
 
 export default function HowItWorksShowcase() {
   const reducedMotion = useReducedMotion();
+  // Below-the-fold canvas: no reason to pay ~860ms of eval inside the load
+  // window. Mounts after load+idle like the hero visuals (see Home.tsx).
+  const visualsReady = useAfterLoadIdle();
   const [index, setIndex] = useState(0);
 
   // Auto-advance pauses under reduced motion: a carousel that rotates on its
@@ -78,7 +82,7 @@ export default function HowItWorksShowcase() {
   return (
     <div>
       <div className="device-window relative w-full h-[560px] sm:h-[600px] md:h-[640px] rounded-3xl overflow-hidden flex items-center justify-center p-6 sm:p-10">
-        {!reducedMotion && <Suspense fallback={null}><NeuronBackdrop /></Suspense>}
+        {!reducedMotion && visualsReady && <Suspense fallback={null}><NeuronBackdrop /></Suspense>}
 
         <motion.div
           key={slide.key}
@@ -147,15 +151,23 @@ export default function HowItWorksShowcase() {
         </button>
       </div>
 
-      <div className="flex items-center justify-center gap-1.5 mt-4">
+      <div className="flex items-center justify-center gap-0.5 mt-4">
         {SLIDES.map((s, i) => (
           <button
             key={s.key}
             type="button"
             onClick={() => setIndex(i)}
             aria-label={`Show ${s.title}`}
-            className={`w-1.5 h-1.5 rounded-full transition-colors ${i === index ? 'bg-sky-300' : 'bg-white/15 hover:bg-white/30'}`}
-          />
+            // 24px hit area (WCAG 2.2 target-size-minimum) with the visual
+            // dot centered inside — the 6px dot alone fails touch-target
+            // checks and is hard to tap on a phone.
+            className="w-6 h-6 flex items-center justify-center"
+          >
+            <span
+              aria-hidden="true"
+              className={`block h-1.5 rounded-full transition-colors ${i === index ? 'w-6 bg-sky-300' : 'w-1.5 bg-white/15 hover:bg-white/30'}`}
+            />
+          </button>
         ))}
       </div>
     </div>
