@@ -1,5 +1,5 @@
 ﻿import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { useAfterLoadIdle } from '@/hooks/useAfterLoadIdle';
+import { useVisualsGate } from '@/hooks/useVisualsGate';
 import React, { Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, FileText, Layers, Video, Gamepad2, ClipboardCheck } from 'lucide-react';
@@ -61,8 +61,8 @@ const ROTATE_MS = 7000;
 export default function HowItWorksShowcase() {
   const reducedMotion = useReducedMotion();
   // Below-the-fold canvas: no reason to pay ~860ms of eval inside the load
-  // window. Mounts after load+idle like the hero visuals (see Home.tsx).
-  const visualsReady = useAfterLoadIdle();
+  // window. Mounts on first interaction like the hero visuals (see Home.tsx).
+  const visualsReady = useVisualsGate();
   const [index, setIndex] = useState(0);
 
   // Auto-advance pauses under reduced motion: a carousel that rotates on its

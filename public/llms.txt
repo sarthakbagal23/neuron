@@ -38,3 +38,23 @@ Fonts: Inter Tight + Newsreader (self-hosted, OFL-1.1)
 ## Built by
 Abishek Mohan and Faiz Khan, 2026-27 school year.
 All content original; citations listed at https://neurontsa.vercel.app/reference
+
+## Links
+- [Home](https://neurontsa.vercel.app/)
+- [Learning modules](https://neurontsa.vercel.app/modules)
+- [AI Fundamentals](https://neurontsa.vercel.app/modules/fundamentals)
+- [Practical AI Tools](https://neurontsa.vercel.app/modules/tools)
+- [Ethical AI Use](https://neurontsa.vercel.app/modules/ethics)
+- [AI in the Real World](https://neurontsa.vercel.app/modules/real-world)
+- [AI & Creativity](https://neurontsa.vercel.app/modules/creativity)
+- [The Future of AI](https://neurontsa.vercel.app/modules/future)
+- [Sustainable & Efficient AI](https://neurontsa.vercel.app/modules/sustainability)
+- [Challenges](https://neurontsa.vercel.app/challenges)
+- [AI tools compared](https://neurontsa.vercel.app/tools)
+- [Sources & References](https://neurontsa.vercel.app/reference)
+- [AI Glossary](https://neurontsa.vercel.app/glossary)
+- [Student Work Log](https://neurontsa.vercel.app/work-log)
+- [Copyright Checklist](https://neurontsa.vercel.app/copyright)
+- [Design Process](https://neurontsa.vercel.app/process)
+- [Privacy](https://neurontsa.vercel.app/privacy)
+- [Accessibility Guide](https://neurontsa.vercel.app/accessibility-guide)

@@ -1,6 +1,6 @@
 ﻿import React, { Suspense } from 'react';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { useAfterLoadIdle } from '@/hooks/useAfterLoadIdle';
+import { useVisualsGate } from '@/hooks/useVisualsGate';
 import HeroContent from '../components/HeroContent';
 const BrainScene = React.lazy(() => import('../components/BrainScene'));
 import ParticleText from '../components/ParticleText';
@@ -9,10 +9,11 @@ import PixelSnow from '../components/PixelSnow';
 
 export default function Home() {
   const reducedMotion = useReducedMotion();
-  // Heavy atmosphere (WebGL + three canvas loops) mounts only after load +
-  // idle: the headline and progress card paint immediately, the spectacle
-  // layers in behind them. See useAfterLoadIdle for the measured why.
-  const visualsReady = useAfterLoadIdle();
+  // Heavy atmosphere (WebGL + three canvas loops) mounts on first user
+  // interaction: the headline and progress card paint immediately, the
+  // spectacle layers in the moment the visitor engages. See useVisualsGate
+  // for the measured why.
+  const visualsReady = useVisualsGate();
   const showVisuals = !reducedMotion && visualsReady;
   return (
     <>

@@ -34,7 +34,7 @@ const Privacy = React.lazy(() => import('./pages/Privacy'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
 
 import GuestBanner from './components/GuestBanner';
-import { useAfterLoadIdle } from './hooks/useAfterLoadIdle';
+import { useVisualsGate } from './hooks/useVisualsGate';
 
 // Per-route document titles so screen readers, history, and tabs announce
 // where SPA navigation just landed. Keep in sync with the <Route> table below.
@@ -87,11 +87,11 @@ function App() {
   // Short human label of the current page, mirrored into the aria-live
   // region below so route changes are announced to screen readers.
   const [announcement, setAnnouncement] = useState('');
-  // Global code-rain backdrop mounts after load+idle (same rationale as the
-  // hero visuals in Home.tsx): it's pure atmosphere on a -z-10 layer, so
-  // deferring it is invisible to LCP and removes its animation work from
+  // Global code-rain backdrop mounts on first interaction (same rationale
+  // as the hero visuals in Home.tsx): it's pure atmosphere on a -z-10 layer,
+  // so gating it is invisible to LCP and removes its animation work from
   // the load window on every route, not just home.
-  const backdropReady = useAfterLoadIdle();
+  const backdropReady = useVisualsGate();
 
   useEffect(() => {
     if (!window.localStorage.getItem(TUTORIAL_STORAGE_KEY)) {

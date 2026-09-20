@@ -143,7 +143,7 @@ export default function CodeBackdrop({ mounted = true }: { mounted?: boolean }) 
   const particles = useMemo(() => buildParticles(30), []);
   const rainColumns = useMemo(() => buildRainColumns(22), []);
 
-  // `mounted` is driven by useAfterLoadIdle in App.tsx: the animated layers
+  // `mounted` is driven by useVisualsGate in App.tsx: the animated layers
   // (52 CSS-animated spans + a ticking interval) stay out of the load
   // window. The fixed shell div itself always renders so nothing reflows.
   if (!mounted) {
